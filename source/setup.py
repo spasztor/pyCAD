@@ -15,7 +15,7 @@ with open("tests_require.txt") as file:
  
 setup(
     name='OpenCAD',
-    description='CAD software that provides power tools and automation for engineers and alike.'
+    description='CAD software that provides power tools and automation for engineers and alike.',
     version='0.0.1',
     long_description=(
         "This is a prototype for OpenCAD, an open source software for computer aided "
@@ -25,7 +25,7 @@ setup(
         "simple drafting once again. OpenCAD feels as simple as pen on paper with a scale "
         "while providing a considerable amount of complexity and automation and the users "
         "direction. "
-        )
+        ),
     url='https://github.com/spasztor/OpenCAD',
     author='Szabolcs Pasztor',
     author_email='szabolcs1992@gmail.com',
