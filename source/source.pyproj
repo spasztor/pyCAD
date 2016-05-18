@@ -24,6 +24,9 @@
   <ItemGroup>
     <Compile Include="objects.py" />
     <Compile Include="setup.py" />
+    <Compile Include="test_objects.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

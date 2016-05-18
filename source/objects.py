@@ -14,10 +14,14 @@ import math
 
 def new_handle(handle=None):
     """ Creates a new handle or returns the passed handle if it's valid. """
-    if handle is not None and str(handle) == uuid.UUID(handle, 4):
-        return handle
-    else:
-        return uuid.uuid4()
+    try:
+        if handle is not None and str(handle) == str(uuid.UUID(handle, version=4)):
+            return handle
+        else:
+            return str(uuid.uuid4())
+    except:
+        return str(uuid.uuid4())
+
 
 class Point:
     """ Point class containing a northing, easting, elevation and handle. """
@@ -26,6 +30,9 @@ class Point:
         self.easting = easting
         self.elevation = elevation
         self.handle = new_handle(handle)
+
+    def __str__(self):
+        return "{}, {}, {}".format(self.easting, self.northing, self.elevation)
 
 class Line:
     """ Line class containing a starting point, end point, potential center_point and handle. """
