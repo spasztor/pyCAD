@@ -8,12 +8,23 @@ Specifically this module contains the following:
         Point(northing, easting, elevation, handle) - A basic point object.
         Line(start, end, center_point, handle) - A line object that can also be an arc if you wish.
         Polyline() - A dictionary of lines.
+NAME
+SHORT_DESC
+LONG_DESC
+COPYRIGHT
+LICENSE
 """
 import uuid
 import math
 
 def new_handle(handle=None):
-    """ Creates a new handle or returns the passed handle if it's valid. """
+    """ SHORT_DESC
+        LONG_DESC
+        ARG
+        RETURNS
+        RAISES
+    Creates a new handle or returns the passed handle if it's valid.
+    """
     try:
         if handle is not None and str(handle) == str(uuid.UUID(handle, version=4)):
             return handle
@@ -21,7 +32,6 @@ def new_handle(handle=None):
             return str(uuid.uuid4())
     except:
         return str(uuid.uuid4())
-
 
 class Point:
     """ Point class containing a northing, easting, elevation and handle. """
@@ -47,16 +57,21 @@ class Line:
 
     def _is_valid_center_point(self):
         """ Checks to see if the center_point is equadistant to the start and end point. """
-        distance_to_start = Line(self.center_point, self.start).get_length()
-        distance_to_end = Line(self.center_point, self.end).get_length()
-        return True if distance_to_start == distance_to_end else False
+        if self.center_point is None:
+            return False
+        else:
+            distance_to_start = Line(self.center_point, self.start).get_length()
+            distance_to_end = Line(self.center_point, self.end).get_length()
+            return True if distance_to_start == distance_to_end else False
 
     def get_length(self):
         """ Calculates the length of the line using northing, easting and elevation. """
         northing_distance = self.end.northing - self.start.northing
         easting_distance = self.end.easting - self.start.easting
         elevation_distance = self.end.elevation - self.start.elevation
-        return math.sqrt(northing_distance ^ 2 + easting_distance ^ 2 + elevation_distance ^ 2)
+        return math.sqrt(math.pow(northing_distance, 2)
+                         + math.pow(easting_distance, 2)
+                         + math.pow(elevation_distance, 2))
 
 class Polyline:
     """ A polyline object which is a dictionary of lines and a handle.

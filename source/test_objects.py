@@ -1,33 +1,34 @@
 #!/usr/bin/python
 """ Unit tests for objects.py """
-import unittest
+import collections
 import objects
+import unittest
 import uuid
+# Test all point values with point 0 or UTM coords of: 31 S 483925 2010789
+#                                                      elev = 3918.63517
 
-class Test_objects(unittest.TestCase):
+class Test_Functions(unittest.TestCase):
     def test_new_handle(self):
-        """ Test for good output from objects.new_handle(). """
         handle = objects.new_handle()
         tested_handle = str(uuid.UUID(handle, version=4))
         self.assertEqual(handle, tested_handle)
 
-    def test_new_handle_from_existing(self):
-        """ Test for good output from objects.new_handle() from an existing good handle. """
-        # Test with good handle:
+    def test_new_handle_from_good_handle(self):
         good_handle = "6b341a83-6409-48a0-a917-22f27c8dfb30"
         self.assertEqual(good_handle, objects.new_handle(good_handle))
-        # Test with bad handle:
+
+    def test_new_handle_from_bad_handle(self):
         bad_handle = "handles-are-for-the-weak"
         self.assertNotEqual(bad_handle, objects.new_handle(bad_handle))
 
-    def test_point_init(self):
-        """ Test the init for objects.point. """
-        # Test with empty point
+class test_Point_Class(unittest.TestCase):
+    def test_point_init_as_empty(self):
         point = objects.Point()
         self.assertEqual(point.northing, 0)
         self.assertEqual(point.easting, 0)
         self.assertEqual(point.elevation, 0)
-        # Test with non-empty point at UTM coords of: 31 S 483925 2010789
+
+    def test_point_init_from_values(self):
         northing = 2010789
         easting = 483925
         elevation = 3918.63517
@@ -36,20 +37,34 @@ class Test_objects(unittest.TestCase):
         self.assertEqual(point.easting, easting)
         self.assertEqual(point.elevation, elevation)
 
-    def test_line_init(self):
-        """ Test the init for objects.line. """
-        # Test with blank line
+    def test_point_str(self):
+        point = objects.Point(2010789, 483925, 3918.63517)
+        self.assertEqual(str(point), "483925, 2010789, 3918.63517") 
+
+class test_Line_Class(unittest.TestCase):
+    def test_line_init_as_empty(self):
         line = objects.Line()
-        self.assertEqual(line.start, objects.Point())
-        self.assertEqual(line.end, objects.Point())
+        self.assertEqual(str(line.start), "0.0, 0.0, 0.0")
+        self.assertEqual(str(line.end), "0.0, 0.0, 0.0")
         self.assertIsNone(line.center_point, None)
-        # Test with start and end points
+
+    def test_line_init_from_points(self):
         start_point = objects.Point()
         end_point = objects.Point(2010789, 483925, 3918.63517)
         line = objects.Line(start_point, end_point)
-        self.assertEqual(line.start, start_point)
-        self.assertEqual(line.end, end_point)
+        self.assertEqual(line.start.handle, start_point.handle)
+        self.assertEqual(line.end.handle, end_point.handle)
         self.assertEqual(line.center_point, None)
+
+    def test_line_get_length(self):
+        line = objects.Line(objects.Point(),
+                            objects.Point(2010789, 483925, 3918.63517))
+        self.assertEqual(line.get_length(), 2068204.8167064101) 
+
+    def test_line_is_valid_center_point(self):
+        line = objects.Line(objects.Point(1,1,1), objects.Point(-1,-1,-1),
+                            objects.Point(0,0,0))
+        self.assertEqual(line._is_valid_center_point(), True)
 
 if __name__ == '__main__':
     unittest.main()
