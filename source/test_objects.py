@@ -1,6 +1,7 @@
 #!/usr/bin/python
 """ Unit tests for objects.py """
 import collections
+import exceptions
 import objects
 import unittest
 import uuid
@@ -21,7 +22,7 @@ class Test_Functions(unittest.TestCase):
         bad_handle = "handles-are-for-the-weak"
         self.assertNotEqual(bad_handle, objects.new_handle(bad_handle))
 
-class test_Point_Class(unittest.TestCase):
+class Test_Point_Class(unittest.TestCase):
     def test_point_init_as_empty(self):
         point = objects.Point()
         self.assertEqual(point.northing, 0)
@@ -41,7 +42,12 @@ class test_Point_Class(unittest.TestCase):
         point = objects.Point(2010789, 483925, 3918.63517)
         self.assertEqual(str(point), "483925, 2010789, 3918.63517") 
 
-class test_Line_Class(unittest.TestCase):
+class Test_Line_Class(unittest.TestCase):
+    def test_line_init_with_invalid_center_point(self):
+        with self.assertRaises(exceptions.InvalidCenterPoint):
+            line = objects.Line(objects.Point(1,1,1), objects.Point(-1,-1,-1),
+                                objects.Point(2010789, 483925, 3918.63517))
+
     def test_line_init_as_empty(self):
         line = objects.Line()
         self.assertEqual(str(line.start), "0.0, 0.0, 0.0")
@@ -62,9 +68,16 @@ class test_Line_Class(unittest.TestCase):
         self.assertEqual(line.get_length(), 2068204.8167064101) 
 
     def test_line_is_valid_center_point(self):
-        line = objects.Line(objects.Point(1,1,1), objects.Point(-1,-1,-1),
-                            objects.Point(0,0,0))
-        self.assertEqual(line._is_valid_center_point(), True)
+        is_valid = objects.Line.is_valid_center_point(objects.Point(1,1,1),
+                                                      objects.Point(-1,-1,-1),
+                                                      objects.Point(0,0,0))
+        self.assertEqual(is_valid, True)
+
+    def test_line_is_invalid_center_point(self):
+        is_invalid = objects.Line.is_valid_center_point(objects.Point(1,1,1),
+                                                      objects.Point(-1,-1,-1),
+                                                      objects.Point(2010789, 483925, 3918.63517))
+        self.assertEqual(is_invalid, False)
 
 if __name__ == '__main__':
     unittest.main()

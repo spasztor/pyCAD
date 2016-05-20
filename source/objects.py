@@ -14,6 +14,7 @@ LONG_DESC
 COPYRIGHT
 LICENSE
 """
+import exceptions #from pyCAD import exceptions
 import uuid
 import math
 
@@ -44,28 +45,34 @@ class Point:
     def __str__(self):
         return "{}, {}, {}".format(self.easting, self.northing, self.elevation)
 
+    def __eq__(self, point):
+        if self.northing == point.northing and \
+            self.easting == point.easting and \
+            self.elevation == point.elevation:
+            return True
+        else:
+            return False
+
 class Line:
     """ Line class containing a starting point, end point, potential center_point and handle. """
     def __init__(self, start=Point(), end=Point(),
                  center_point=None, handle=None):
+        if center_point is not None and not self.is_valid_center_point(start, end, center_point):
+            raise exceptions.InvalidCenterPoint("Invalid center point on init.")
         self.start = start
         self.end = end
         self.center_point = center_point
-        if self._is_valid_center_point():
-            self.center_point = center_point
         self.handle = new_handle(handle)
 
-    def _is_valid_center_point(self):
+    @staticmethod
+    def is_valid_center_point(start, end, center_point):
         """ Checks to see if the center_point is equadistant to the start and end point. """
-        if self.center_point is None:
-            return False
-        else:
-            distance_to_start = Line(self.center_point, self.start).get_length()
-            distance_to_end = Line(self.center_point, self.end).get_length()
-            return True if distance_to_start == distance_to_end else False
+        distance_to_start = Line(center_point, start).get_length()
+        distance_to_end = Line(center_point, end).get_length()
+        return True if distance_to_start == distance_to_end else False
 
     def get_length(self):
-        """ Calculates the length of the line using northing, easting and elevation. """
+        """ Calculates the length of the line using the northing, easting and elevation. """
         northing_distance = self.end.northing - self.start.northing
         easting_distance = self.end.easting - self.start.easting
         elevation_distance = self.end.elevation - self.start.elevation
@@ -74,11 +81,15 @@ class Line:
                          + math.pow(elevation_distance, 2))
 
 class Polyline:
-    """ A polyline object which is a dictionary of lines and a handle.
-    """
-    def __init__(self, handle=None, *arg):
+    """ A polyline object which is a dictionary of lines and a handle. """
+    def __init__(self, handle=None, *points):
         self.elements = {}
+        self.last_line = None
+        for point in points:
+            pass
         self.handle = new_handle(handle)
-        #if len(arg > 0):
-        #    for argument in arg:
-        #        self.elements[arg.handle] = (
+
+    def append(self, line: objects.Line):
+        """ Appends a point to the polyline. """
+        self.elements[Line.handle] = (self.last_line, len(self.elements) + 1)
+        self.last_line = line.handle
