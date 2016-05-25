@@ -14,9 +14,9 @@ LONG_DESC
 COPYRIGHT
 LICENSE
 """
-import exceptions #from pyCAD import exceptions
 import uuid
 import math
+import exceptions #from pyCAD import exceptions
 
 def new_handle(handle=None):
     """ SHORT_DESC
@@ -26,13 +26,8 @@ def new_handle(handle=None):
         RAISES
     Creates a new handle or returns the passed handle if it's valid.
     """
-    try:
-        if handle is not None and str(handle) == str(uuid.UUID(handle, version=4)):
-            return handle
-        else:
-            return str(uuid.uuid4())
-    except:
-        return str(uuid.uuid4())
+    return handle if handle is not None and str(handle) == \
+        str(uuid.UUID(handle, version=4)) else str(uuid.uuid4())
 
 class Point:
     """ Point class containing a northing, easting, elevation and handle. """
@@ -46,19 +41,17 @@ class Point:
         return "{}, {}, {}".format(self.easting, self.northing, self.elevation)
 
     def __eq__(self, point):
-        if self.northing == point.northing and \
+        return True if self.northing == point.northing and \
             self.easting == point.easting and \
-            self.elevation == point.elevation:
-            return True
-        else:
-            return False
+            self.elevation == point.elevation \
+            else False
 
 class Line:
     """ Line class containing a starting point, end point, potential center_point and handle. """
     def __init__(self, start=Point(), end=Point(),
                  center_point=None, handle=None):
         if center_point is not None and not self.is_valid_center_point(start, end, center_point):
-            raise exceptions.InvalidCenterPoint("Invalid center point on init.")
+            raise ValueError("Invalid center point on init.")
         self.start = start
         self.end = end
         self.center_point = center_point
@@ -81,15 +74,15 @@ class Line:
                          + math.pow(elevation_distance, 2))
 
 class Polyline:
-    """ A polyline object which is a dictionary of lines and a handle. """
-    def __init__(self, handle=None, *points):
+    """ A dictionary of lines with the handle as the key. """
+    def __init__(self, handle=None, *lines):
         self.elements = {}
-        self.last_line = None
-        for point in points:
-            pass
+        self._last_line_handle = None
+        for line in lines:
+            self.append(line)
         self.handle = new_handle(handle)
 
-    def append(self, line: objects.Line):
-        """ Appends a point to the polyline. """
-        self.elements[Line.handle] = (self.last_line, len(self.elements) + 1)
-        self.last_line = line.handle
+    def append(self, line: Line):
+        """ Appends a line to the polyline. """
+        self.elements[line.handle] = (self._last_line_handle, len(self.elements) + 1)
+        self._last_line_handle = line.handle

@@ -8,7 +8,7 @@ import uuid
 # Test all point values with point 0 or UTM coords of: 31 S 483925 2010789
 #                                                      elev = 3918.63517
 
-class Test_Functions(unittest.TestCase):
+class TestFunctions(unittest.TestCase):
     def test_new_handle(self):
         handle = objects.new_handle()
         tested_handle = str(uuid.UUID(handle, version=4))
@@ -19,10 +19,15 @@ class Test_Functions(unittest.TestCase):
         self.assertEqual(good_handle, objects.new_handle(good_handle))
 
     def test_new_handle_from_bad_handle(self):
-        bad_handle = "handles-are-for-the-weak"
-        self.assertNotEqual(bad_handle, objects.new_handle(bad_handle))
+        with self.assertRaises(ValueError):
+            bad_handle = "handles-are-for-the-weak"
+            objects.new_handle(bad_handle)
+    
+    def test_new_handle_from_none(self):
+        no_handle = None
+        self.assertNotEqual(no_handle, objects.new_handle(no_handle))
 
-class Test_Point_Class(unittest.TestCase):
+class TestPointClass(unittest.TestCase):
     def test_point_init_as_empty(self):
         point = objects.Point()
         self.assertEqual(point.northing, 0)
@@ -42,9 +47,30 @@ class Test_Point_Class(unittest.TestCase):
         point = objects.Point(2010789, 483925, 3918.63517)
         self.assertEqual(str(point), "483925, 2010789, 3918.63517") 
 
-class Test_Line_Class(unittest.TestCase):
+    def test_point_eq_true(self):
+        point = objects.Point(2010789, 483925, 3918.63517)
+        point_equal = objects.Point(2010789, 483925, 3918.63517)
+        self.assertEqual(point, point_equal)
+
+    def test_point_eq_false(self):
+        point = objects.Point(2010789, 483925, 3918.63517)
+        point_no_elevation = objects.Point(2010789, 483925, 0)
+        point_no_northing = objects.Point(0, 483925, 3918.63517)
+        point_no_easting = objects.Point(2010789, 0, 3918.63517)
+        point_all_bad = objects.Point(0, 0, 0)
+        bool_no_elevation = point == point_no_elevation
+        bool_no_northing = point == point_no_northing
+        bool_no_easting = point == point_no_easting
+        bool_all_bad = point == point_all_bad 
+
+        self.assertEqual(bool_no_elevation, False)
+        self.assertEqual(bool_no_northing, False)
+        self.assertEqual(bool_no_easting, False)
+        self.assertEqual(bool_all_bad, False)
+
+class TestLineClass(unittest.TestCase):
     def test_line_init_with_invalid_center_point(self):
-        with self.assertRaises(exceptions.InvalidCenterPoint):
+        with self.assertRaises(ValueError):
             line = objects.Line(objects.Point(1,1,1), objects.Point(-1,-1,-1),
                                 objects.Point(2010789, 483925, 3918.63517))
 
