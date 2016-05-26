@@ -3,16 +3,16 @@ import codecs
 import os
 import re
 import sys
- 
+
 here = os.path.abspath(os.path.dirname(__file__))
- 
+
 with open("build_requires.txt") as file:
     install_requires = [dep.strip() for dep in file.readlines()]
- 
+
 with open("tests_require.txt") as file:
     tests_require = [dep.strip() for dep in file.readlines()]
- 
- 
+
+
 setup(
     name='OpenCAD',
     description='CAD software that provides power tools and automation for engineers and alike.',

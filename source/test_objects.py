@@ -22,7 +22,7 @@ class TestFunctions(unittest.TestCase):
         with self.assertRaises(ValueError):
             bad_handle = "handles-are-for-the-weak"
             objects.new_handle(bad_handle)
-    
+
     def test_new_handle_from_none(self):
         no_handle = None
         self.assertNotEqual(no_handle, objects.new_handle(no_handle))
@@ -39,13 +39,13 @@ class TestPointClass(unittest.TestCase):
         easting = 483925
         elevation = 3918.63517
         point = objects.Point(northing, easting, elevation)
-        self.assertEqual(point.northing, northing) 
+        self.assertEqual(point.northing, northing)
         self.assertEqual(point.easting, easting)
         self.assertEqual(point.elevation, elevation)
 
     def test_point_str(self):
         point = objects.Point(2010789, 483925, 3918.63517)
-        self.assertEqual(str(point), "483925, 2010789, 3918.63517") 
+        self.assertEqual(str(point), "483925, 2010789, 3918.63517")
 
     def test_point_eq_true(self):
         point = objects.Point(2010789, 483925, 3918.63517)
@@ -58,15 +58,33 @@ class TestPointClass(unittest.TestCase):
         point_no_northing = objects.Point(0, 483925, 3918.63517)
         point_no_easting = objects.Point(2010789, 0, 3918.63517)
         point_all_bad = objects.Point(0, 0, 0)
-        bool_no_elevation = point == point_no_elevation
-        bool_no_northing = point == point_no_northing
-        bool_no_easting = point == point_no_easting
-        bool_all_bad = point == point_all_bad 
+        is_no_elevation = point == point_no_elevation
+        is_no_northing = point == point_no_northing
+        is_no_easting = point == point_no_easting
+        is_all_bad = point == point_all_bad
 
-        self.assertEqual(bool_no_elevation, False)
-        self.assertEqual(bool_no_northing, False)
-        self.assertEqual(bool_no_easting, False)
-        self.assertEqual(bool_all_bad, False)
+        self.assertEqual(is_no_elevation, False)
+        self.assertEqual(is_no_northing, False)
+        self.assertEqual(is_no_easting, False)
+        self.assertEqual(is_all_bad, False)
+
+    def test_point_ne_true(self):
+        point = objects.Point(2010789, 483925, 3918.63517)
+        point_no_elevation = objects.Point(2010789, 483925, 0)
+        point_no_northing = objects.Point(0, 483925, 3918.63517)
+        point_no_easting = objects.Point(2010789, 0, 3918.63517)
+        point_all_bad = objects.Point(0, 0, 0)
+
+        self.assertNotEqual(point, point_no_elevation)
+        self.assertNotEqual(point, point_no_northing)
+        self.assertNotEqual(point, point_no_easting)
+        self.assertNotEqual(point, point_all_bad)
+
+    def test_point_ne_false(self):
+        point = objects.Point(2010789, 483925, 3918.63517)
+        point_equal = objects.Point(2010789, 483925, 3918.63517)
+        is_not_equal = point != point_equal
+        self.assertEqual(is_not_equal, False)
 
 class TestLineClass(unittest.TestCase):
     def test_line_init_with_invalid_center_point(self):
@@ -91,7 +109,7 @@ class TestLineClass(unittest.TestCase):
     def test_line_get_length(self):
         line = objects.Line(objects.Point(),
                             objects.Point(2010789, 483925, 3918.63517))
-        self.assertEqual(line.get_length(), 2068204.8167064101) 
+        self.assertEqual(line.get_length(), 2068204.8167064101)
 
     def test_line_is_valid_center_point(self):
         is_valid = objects.Line.is_valid_center_point(objects.Point(1,1,1),
@@ -104,6 +122,19 @@ class TestLineClass(unittest.TestCase):
                                                       objects.Point(-1,-1,-1),
                                                       objects.Point(2010789, 483925, 3918.63517))
         self.assertEqual(is_invalid, False)
+
+class TestPolylineClass(unittest.TestCase):
+    def test_init(self):
+        line_1 = objects.Line(objects.Point(),
+                              objects.Point(2010789, 483925, 3918.63517))
+        line_2 = objects.Line(objects.Point(2010789, 483925, 3918.63517),
+                              objects.Point())
+        polyline = objects.Polyline([line_1, line_2])
+        self.assertEqual(polyline.elements[line_1.handle], line_1)
+        self.assertEqual(polyline.elements[line_2.handle], line_2)
+
+    def test_append(self):
+        pass
 
 if __name__ == '__main__':
     unittest.main()

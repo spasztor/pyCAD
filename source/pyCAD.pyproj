@@ -4,14 +4,18 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>ee2d728f-9b3f-40dc-80ae-bd83633c4cdd</ProjectGuid>
-    <ProjectHome>.</ProjectHome>
-    <StartupFile>setup.py</StartupFile>
+    <ProjectHome>
+    </ProjectHome>
+    <StartupFile>startup.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
-    <Name>source</Name>
+    <Name>pyCAD</Name>
     <RootNamespace>source</RootNamespace>
+    <IsWindowsApplication>False</IsWindowsApplication>
+    <InterpreterId>{9a7a9026-48c1-4688-9d5d-e5699d47d074}</InterpreterId>
+    <InterpreterVersion>3.5</InterpreterVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -26,16 +30,13 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="objects.py" />
-    <Compile Include="package1\__init__.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="setup.py" />
     <Compile Include="test_objects.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="package1\" />
+    <InterpreterReference Include="{9a7a9026-48c1-4688-9d5d-e5699d47d074}\3.5" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

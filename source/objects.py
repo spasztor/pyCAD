@@ -75,7 +75,7 @@ class Line:
 
 class Polyline:
     """ A dictionary of lines with the handle as the key. """
-    def __init__(self, handle=None, *lines):
+    def __init__(self, *lines, handle=None):
         self.elements = {}
         self._last_line_handle = None
         for line in lines:
