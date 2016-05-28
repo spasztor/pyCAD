@@ -123,6 +123,61 @@ class TestLineClass(unittest.TestCase):
                                                       objects.Point(2010789, 483925, 3918.63517))
         self.assertEqual(is_invalid, False)
 
+    def test_line_eq_true(self):
+        line = objects.Line(objects.Point(),
+                            objects.Point(2010789, 483925, 3918.63517))
+        line_equal = objects.Line(objects.Point(),
+                            objects.Point(2010789, 483925, 3918.63517))
+        self.assertEqual(line, line_equal)
+
+    def test_line_eq_false(self):
+        line = objects.Line(objects.Point(),
+                            objects.Point(2010789, 483925, 3918.63517))
+        line_differant_start = objects.Line(objects.Point(1,0,0),
+                                            objects.Point(2010789, 483925, 3918.63517))
+        line_differant_end = objects.Line(objects.Point(),
+                                          objects.Point(2010789, 483924, 3918.63517))
+        #line_differant_second_point = objects.Line(objects.Point(),
+        #                                           objects.Point(2010789, 483924, 3918.63517),
+        #                                           objects.Point(1,1,0))
+        line_all_bad = objects.Line(objects.Point(0,1,0),
+                                    objects.Point(0,2,0)) #Will have to test for second point.
+        is_differant_start = line == line_differant_start
+        is_differant_end = line == line_differant_end
+        #is_differant_second_point = line == line_differant_second_point
+        is_all_bad = line == line_all_bad
+
+        self.assertEqual(is_differant_start, False)
+        self.assertEqual(is_differant_end, False)
+        #self.assertEqual(is_differant_second_point, False)
+        self.assertEqual(is_all_bad, False)
+
+    def test_line_ne_true(self):
+        line = objects.Line(objects.Point(),
+                            objects.Point(2010789, 483925, 3918.63517))
+        line_differant_start = objects.Line(objects.Point(1,0,0),
+                                            objects.Point(2010789, 483925, 3918.63517))
+        line_differant_end = objects.Line(objects.Point(),
+                                          objects.Point(2010789, 483924, 3918.63517))
+        #line_differant_second_point = objects.Line(objects.Point(),
+        #                                           objects.Point(2010789, 483924, 3918.63517),
+        #                                           objects.Point(1,1,0))
+        line_all_bad = objects.Line(objects.Point(0,1,0),
+                                    objects.Point(0,2,0)) #Will have to test for second point.
+
+        self.assertNotEqual(line, line_differant_start)
+        self.assertNotEqual(line, line_differant_end)
+        #self.assertNotEqual(line, line_differant_second_point)
+        self.assertNotEqual(line, line_all_bad)
+
+    def test_line_ne_false(self):
+        line = objects.Line(objects.Point(),
+                            objects.Point(2010789, 483925, 3918.63517))
+        line_equal = objects.Line(objects.Point(),
+                            objects.Point(2010789, 483925, 3918.63517))
+        is_not_equal = line != line_equal
+        self.assertEqual(is_not_equal, False)
+
 class TestPolylineClass(unittest.TestCase):
     def test_init(self):
         line_1 = objects.Line(objects.Point(),

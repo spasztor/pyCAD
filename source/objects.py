@@ -31,6 +31,8 @@ def new_handle(handle=None):
 
 class Point:
     """ Point class containing a northing, easting, elevation and handle. """
+    __slots__ = ['northing', 'easting', 'elevation', 'handle']
+
     def __init__(self, northing=0.0, easting=0.0, elevation=0.0, handle=None):
         self.northing = northing
         self.easting = easting
@@ -48,13 +50,16 @@ class Point:
 
 class Line:
     """ Line class containing a starting point, end point, potential center_point and handle. """
+    __slots__ = ['start', 'end', 'center_point', 'handle']
+
     def __init__(self, start=Point(), end=Point(),
                  center_point=None, handle=None):
         if center_point is not None and not self.is_valid_center_point(start, end, center_point):
             raise ValueError("Invalid center point on init.")
         self.start = start
         self.end = end
-        self.center_point = center_point
+        #TODO: Use second point instead of center point.
+        self.center_point = center_point 
         self.handle = new_handle(handle)
 
     @staticmethod
@@ -72,6 +77,12 @@ class Line:
         return math.sqrt(math.pow(northing_distance, 2)
                          + math.pow(easting_distance, 2)
                          + math.pow(elevation_distance, 2))
+
+    def __eq__(self, line):
+        return True if self.start == line.start and \
+            self.end == line.end and \
+            self.center_point == line.center_point \
+            else False
 
 class Polyline:
     """ A dictionary of lines with the handle as the key. """
