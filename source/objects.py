@@ -50,24 +50,20 @@ class Point:
 
 class Line:
     """ Line class containing a starting point, end point, potential center_point and handle. """
-    __slots__ = ['start', 'end', 'center_point', 'handle']
+    __slots__ = ['start', 'end', 'middle', 'handle']
 
     def __init__(self, start=Point(), end=Point(),
-                 center_point=None, handle=None):
-        if center_point is not None and not self.is_valid_center_point(start, end, center_point):
-            raise ValueError("Invalid center point on init.")
+                 middle=None, handle=None):
         self.start = start
         self.end = end
-        #TODO: Use second point instead of center point.
-        self.center_point = center_point 
+        if middle is None:
+            middle_northing = (self.start.northing + self.end.northing) / 2
+            middle_easting = (self.start.easting + self.end.easting) / 2
+            middle_elevation = (self.start.elevation + self.end.elevation) / 2
+            self.middle = Point(middle_northing, middle_easting, middle_elevation)
+        else:
+            self.middle = middle
         self.handle = new_handle(handle)
-
-    @staticmethod
-    def is_valid_center_point(start, end, center_point):
-        """ Checks to see if the center_point is equadistant to the start and end point. """
-        distance_to_start = Line(center_point, start).get_length()
-        distance_to_end = Line(center_point, end).get_length()
-        return True if distance_to_start == distance_to_end else False
 
     def get_length(self):
         """ Calculates the length of the line using the northing, easting and elevation. """
@@ -78,10 +74,18 @@ class Line:
                          + math.pow(easting_distance, 2)
                          + math.pow(elevation_distance, 2))
 
+    def get_radius(self):
+        """ Calculates the radius of the arc or returns none if it is a line. """
+        #WELP: This is going to suck. Your going to need either implement
+        #      vector math with lines OR just do it temporarily for this function.
+        #See wiki for help: https://en.wikipedia.org/wiki/Circumscribed_circle
+        pass
+
+
     def __eq__(self, line):
         return True if self.start == line.start and \
             self.end == line.end and \
-            self.center_point == line.center_point \
+            self.middle == line.middle\
             else False
 
 class Polyline:

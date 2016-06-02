@@ -87,48 +87,35 @@ class TestPointClass(unittest.TestCase):
         self.assertEqual(is_not_equal, False)
 
 class TestLineClass(unittest.TestCase):
-    def test_line_init_with_invalid_center_point(self):
-        with self.assertRaises(ValueError):
-            line = objects.Line(objects.Point(1,1,1), objects.Point(-1,-1,-1),
-                                objects.Point(2010789, 483925, 3918.63517))
-
     def test_line_init_as_empty(self):
         line = objects.Line()
         self.assertEqual(str(line.start), "0.0, 0.0, 0.0")
         self.assertEqual(str(line.end), "0.0, 0.0, 0.0")
-        self.assertIsNone(line.center_point, None)
+        self.assertEqual(str(line.middle), "0.0, 0.0, 0.0")
 
-    def test_line_init_from_points(self):
+    def test_line_from_two_points(self):
         start_point = objects.Point()
         end_point = objects.Point(2010789, 483925, 3918.63517)
         line = objects.Line(start_point, end_point)
         self.assertEqual(line.start.handle, start_point.handle)
         self.assertEqual(line.end.handle, end_point.handle)
-        self.assertEqual(line.center_point, None)
+        self.assertEqual(line.middle.northing, 2010789 / 2)
+        self.assertEqual(line.middle.easting, 483925 / 2)
+        self.assertEqual(line.middle.elevation, 3918.63517 / 2)
+
+    def test_line_init_from_points(self):
+        start_point = objects.Point()
+        end_point = objects.Point(2010789, 483925, 3918.63517)
+        middle_point = objects.Point(1, 1, 1)
+        line = objects.Line(start_point, end_point, middle_point)
+        self.assertEqual(line.start.handle, start_point.handle)
+        self.assertEqual(line.end.handle, end_point.handle)
+        self.assertEqual(line.middle.handle, middle_point.handle)
 
     def test_line_get_length(self):
         line = objects.Line(objects.Point(),
                             objects.Point(2010789, 483925, 3918.63517))
         self.assertEqual(line.get_length(), 2068204.8167064101)
-
-    def test_line_is_valid_center_point(self):
-        is_valid = objects.Line.is_valid_center_point(objects.Point(1,1,1),
-                                                      objects.Point(-1,-1,-1),
-                                                      objects.Point(0,0,0))
-        self.assertEqual(is_valid, True)
-
-    def test_line_is_invalid_center_point(self):
-        is_invalid = objects.Line.is_valid_center_point(objects.Point(1,1,1),
-                                                      objects.Point(-1,-1,-1),
-                                                      objects.Point(2010789, 483925, 3918.63517))
-        self.assertEqual(is_invalid, False)
-
-    def test_line_eq_true(self):
-        line = objects.Line(objects.Point(),
-                            objects.Point(2010789, 483925, 3918.63517))
-        line_equal = objects.Line(objects.Point(),
-                            objects.Point(2010789, 483925, 3918.63517))
-        self.assertEqual(line, line_equal)
 
     def test_line_eq_false(self):
         line = objects.Line(objects.Point(),
