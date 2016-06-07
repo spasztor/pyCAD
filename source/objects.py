@@ -74,13 +74,22 @@ class Line:
                          + math.pow(easting_distance, 2)
                          + math.pow(elevation_distance, 2))
 
-    def get_radius(self):
+    def get_2d_center(self):
+        """ Calculates the center of the arc or returns none if it is a line. """
+
+    def get_3d_center(self):
+        """ Calculates the 3d center of the arc or returns none if it is a line. """
+
+    def get_2d_radius(self):
+        """ Calculates the radius of the arc or returns none if it is a line. """
+        pass
+
+    def get_3d_radius(self):
         """ Calculates the radius of the arc or returns none if it is a line. """
         #WELP: This is going to suck. Your going to need either implement
         #      vector math with lines OR just do it temporarily for this function.
         #See wiki for help: https://en.wikipedia.org/wiki/Circumscribed_circle
         pass
-
 
     def __eq__(self, line):
         return True if self.start == line.start and \

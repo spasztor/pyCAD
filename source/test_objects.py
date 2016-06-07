@@ -117,6 +117,10 @@ class TestLineClass(unittest.TestCase):
                             objects.Point(2010789, 483925, 3918.63517))
         self.assertEqual(line.get_length(), 2068204.8167064101)
 
+    def test_line_get_2d_radius(self):
+        line = objects.Line(objects.Point(),
+                            objects.Point(2010789, 483925, 3918.63517))
+
     def test_line_eq_false(self):
         line = objects.Line(objects.Point(),
                             objects.Point(2010789, 483925, 3918.63517))
