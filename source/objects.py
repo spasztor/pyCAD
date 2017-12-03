@@ -47,6 +47,8 @@ class Point:
             self.easting == point.easting and \
             self.elevation == point.elevation \
             else False
+    def print():
+        """ Prints point to output. """
 
 class Line:
     """ Line class containing a starting point, end point, potential center_point and handle. """
@@ -74,6 +76,13 @@ class Line:
                          + math.pow(easting_distance, 2)
                          + math.pow(elevation_distance, 2))
 
+    def __eq__(self, line):
+        return True if self.start == line.start and \
+            self.end == line.end and \
+            self.middle == line.middle\
+            else False
+class Arc:
+    """ A parent of Line with added functionality for arcs. """
     def get_2d_center(self):
         """ Calculates the center of the arc or returns none if it is a line. """
 
@@ -91,22 +100,14 @@ class Line:
         #See wiki for help: https://en.wikipedia.org/wiki/Circumscribed_circle
         pass
 
-    def __eq__(self, line):
-        return True if self.start == line.start and \
-            self.end == line.end and \
-            self.middle == line.middle\
-            else False
-
 class Polyline:
-    """ A dictionary of lines with the handle as the key. """
-    def __init__(self, *lines, handle=None):
+    """ A dictionary of polyline segments with the handle as the key. """
+    def __init__(self, *segments, handle=None):
         self.elements = {}
-        self._last_line_handle = None
-        for line in lines:
-            self.append(line)
+        self.append(*segments)
         self.handle = new_handle(handle)
 
-    def append(self, line: Line):
-        """ Appends a line to the polyline. """
-        self.elements[line.handle] = (self._last_line_handle, len(self.elements) + 1)
-        self._last_line_handle = line.handle
+    def append(self, *segments):
+        """ Appends polyline segments to the polyline. """
+        for segment in segments:
+            self.elements[segment.handle] = segment

@@ -7,6 +7,9 @@ import unittest
 import uuid
 # Test all point values with point 0 or UTM coords of: 31 S 483925 2010789
 #                                                      elev = 3918.63517
+# Note: I used to know where this coordinate is and now it's a mystery. I will
+#       need to convert it to Lat Long to find location and then change it to
+#       Seattle fremont troll for a better location.
 
 class TestFunctions(unittest.TestCase):
     def test_new_handle(self):
@@ -35,13 +38,10 @@ class TestPointClass(unittest.TestCase):
         self.assertEqual(point.elevation, 0)
 
     def test_point_init_from_values(self):
-        northing = 2010789
-        easting = 483925
-        elevation = 3918.63517
-        point = objects.Point(northing, easting, elevation)
-        self.assertEqual(point.northing, northing)
-        self.assertEqual(point.easting, easting)
-        self.assertEqual(point.elevation, elevation)
+        point = objects.Point(2010789, 483925, 3918.63517)
+        self.assertEqual(point.northing, 2010789)
+        self.assertEqual(point.easting, 483925)
+        self.assertEqual(point.elevation, 3918.63517)
 
     def test_point_str(self):
         point = objects.Point(2010789, 483925, 3918.63517)
@@ -170,17 +170,40 @@ class TestLineClass(unittest.TestCase):
         self.assertEqual(is_not_equal, False)
 
 class TestPolylineClass(unittest.TestCase):
-    def test_init(self):
-        line_1 = objects.Line(objects.Point(),
-                              objects.Point(2010789, 483925, 3918.63517))
-        line_2 = objects.Line(objects.Point(2010789, 483925, 3918.63517),
-                              objects.Point())
-        polyline = objects.Polyline([line_1, line_2])
+    def test_pline_init_as_empty(self):
+        polyline = objects.Polyline()
+        self.assertEqual(len(polyline.elements),0)
+        pass
+
+    def test_pline_init_with_objects(self):
+        line_1 = objects.Line()
+        line_2 = objects.Line()
+        polyline = objects.Polyline(line_1, line_2)
         self.assertEqual(polyline.elements[line_1.handle], line_1)
         self.assertEqual(polyline.elements[line_2.handle], line_2)
 
-    def test_append(self):
-        pass
+    def test_pline_append_lines(self):
+        line_1 = objects.Line()
+        line_2 = objects.Line()
+        polyline = objects.Polyline()
+        polyline.append(line_1, line_2)
+        self.assertEqual(polyline.elements[line_1.handle], line_1)
+        self.assertEqual(polyline.elements[line_2.handle], line_2)
+
+    def test_pline_append_arcs(self):
+        arc_1 = objects.Arc()
+        arc_2 = objects.Arc()
+        polyline = objects.Polyline()
+        polyline.append(arc_1, arc_2)
+        self.assertEqual(polyline.elements[arc_1.handle], arc_1)
+        self.assertEqual(polyline.elements[arc_2.handle], arc_2)
+
+    def test_pline_append_bad_objects(self):
+        bad_object = "Nuaghty Zoot"
+        good_object = objects.Line()
+        polyline = objects.Polyline()
+        with self.assertRaises(AttributeError):
+            polyline.append(bad_object, good_object)
 
 if __name__ == '__main__':
     unittest.main()
